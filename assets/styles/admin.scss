@@ -1,0 +1,19 @@
+.adding-form-wrapper {
+  width: 50%;
+  min-width: 300px;
+  padding: 20px 0;
+
+
+  form {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-weight: bold;
+    }
+
+    button {
+      width: fit-content;
+    }
+  }
+}

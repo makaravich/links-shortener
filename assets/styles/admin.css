@@ -1,0 +1,17 @@
+.adding-form-wrapper {
+  width: 50%;
+  min-width: 300px;
+  padding: 20px 0;
+}
+.adding-form-wrapper form {
+  display: flex;
+  flex-direction: column;
+}
+.adding-form-wrapper form label {
+  font-weight: bold;
+}
+.adding-form-wrapper form button {
+  width: fit-content;
+}
+
+/*# sourceMappingURL=admin.css.map */
