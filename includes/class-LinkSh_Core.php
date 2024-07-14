@@ -94,7 +94,6 @@ class LinkSh_Core {
 		return apply_filters( 'linksh_posts_table_columns', [
 
 			'cb'              => '<input type="checkbox" />',
-			//'title'        => __( 'Title', 'linkssh' ),
 			'ls_title'        => __( 'Title', 'linkssh' ),
 			'short_url'       => __( 'Short URL', 'linkssh' ),
 			'date'            => __( 'Date', 'linkssh' ),
@@ -274,15 +273,16 @@ class LinkSh_Core {
 				// Add meta fields
 				update_post_meta( $post_id, LINKSH_LONG_URL_META_NAME, $long_url );
 				update_post_meta( $post_id, LINKSH_SHORT_URL_META_NAME, $short_url_slug );
+				update_post_meta( $post_id, LINKSH_REDIRECT_COUNT_META_NAME, 0 );
 
-				$message = __( 'Post successfully created with ID: ', 'linkssh' ) . $post_id;
+				$message = __( 'Short link successfully created with ID: ', 'linkssh' ) . $post_id;
 				$success = true;
 			} else {
-				$message = __( 'Error creating post', 'linkssh' );
+				$message = __( 'Error creating short link', 'linkssh' );
 			}
 
 		} else {
-			$message = __( 'A post with this slug already exists', 'linkssh' );
+			$message = __( 'Short link with this slug already exists', 'linkssh' );
 		}
 
 		return (object) [
