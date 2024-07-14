@@ -1,7 +1,11 @@
 .adding-form-wrapper {
-  width: 50%;
-  min-width: 300px;
   padding: 20px 0;
+}
+@media screen and (min-width: 720px) {
+  .adding-form-wrapper {
+    width: 50%;
+    min-width: 300px;
+  }
 }
 .adding-form-wrapper form {
   display: flex;
@@ -12,6 +16,19 @@
 }
 .adding-form-wrapper form button {
   width: fit-content;
+}
+
+.postbox#linksh_meta_box .inside .single-field {
+  padding: 1em 0;
+  display: flex;
+  flex-direction: column;
+}
+.postbox#linksh_meta_box .inside .single-field .label {
+  font-weight: bold;
+  margin: 0;
+}
+.postbox#linksh_meta_box .inside .single-field p.value {
+  margin: 0;
 }
 
 /*# sourceMappingURL=admin.css.map */
