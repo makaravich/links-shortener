@@ -19,7 +19,6 @@ The Links Shortener plugin allows authorized users to manage URL shortening dire
 
 3. **Settings and Security:**
     - Override user roles via hooks to control who can manage links.
-    - Ensure data security and access control.
 
 ## Installation
 
