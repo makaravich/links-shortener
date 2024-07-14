@@ -56,7 +56,7 @@ class LinkSh_Ajax {
                 <p class="description"><?php _e( 'Full URL, with https:// ' ); ?></p>
                 <br>
 
-                <label for="short_url"><?php _e( 'Short link address', 'linkssh' ); ?></label>
+                <label for="short_url"><?php _e( 'Short link slug', 'linkssh' ); ?></label>
                 <input type="text" id="short_url" name="short_url" pattern="[a-z0-9]*">
                 <p class="description"><?php printf( __( 'Optional. <br>URL-friendly slug only. Your URL will be generated in the form %s/your_slug. <br>You can use letters a-z and digits 0-9 ' ), home_url() ); ?></p>
                 <br>
