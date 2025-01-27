@@ -17,20 +17,26 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if (!defined('ABSPATH')) {
+    exit;
 }
 
-const LINKSH_POST_TYPE                = 'links_shrt';
-const LINKSH_LONG_URL_META_NAME       = 'long_url';
-const LINKSH_SHORT_URL_META_NAME      = 'short_url_slug';
+const LINKSH_POST_TYPE = 'links_shrt';
+const LINKSH_LOG_TABLE_NAME = 'redirects_log';
+const LINKSH_LONG_URL_META_NAME = 'long_url';
+const LINKSH_SHORT_URL_META_NAME = 'short_url_slug';
 const LINKSH_REDIRECT_COUNT_META_NAME = 'redirects_count';
-const LINKSH_EXTENDED_LOG_META_NAME   = 'linkssh_extended_log';
+const LINKSH_EXTENDED_LOG_META_NAME = 'linkssh_extended_log';
 
 
-define( 'LINKSH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'LINKSH_PLUGIN_BASEPATH', plugin_dir_path( __FILE__ ) );
-define( 'LINKSH_PLUGIN_BASEURI', plugin_dir_url( __FILE__ ) );
+define('LINKSH_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('LINKSH_PLUGIN_BASEPATH', plugin_dir_path(__FILE__));
+define('LINKSH_PLUGIN_BASEURI', plugin_dir_url(__FILE__));
+
+// Activation functions
+require_once 'includes/class-LinkSh_Activate.php';
+// Register activation hook for the plugin
+register_activation_hook(__FILE__, ['LinkSh_Activate', 'my_plugin_activate']);
 
 // Initialization
 require_once 'includes/class-LinkSh_Init.php';

@@ -39,3 +39,19 @@
     }
   }
 }
+
+#wpbody-content {
+  .redirects-log-table {
+    width: 100%;
+    border-collapse: collapse; // Equivalent to cellspacing="0"
+
+    th, td {
+      padding: 5px; // Equivalent to cellpadding="5"
+      border: 1px solid #ccc; // Equivalent to border="1"
+    }
+
+    th {
+      text-align: left;
+    }
+  }
+}
