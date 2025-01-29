@@ -246,8 +246,9 @@ class LinkSh_Core {
 			];
 		}
 
-		$message = '';
-		$success = false;
+		$message  = '';
+		$success  = false;
+		$new_link = '';
 
 		// If $short_url_slug is empty, generate a random value
 		if ( empty( $short_url_slug ) ) {
@@ -283,8 +284,9 @@ class LinkSh_Core {
 				update_post_meta( $post_id, LINKSH_SHORT_URL_META_NAME, $short_url_slug );
 				update_post_meta( $post_id, LINKSH_REDIRECT_COUNT_META_NAME, 0 );
 
-				$message = __( 'Short link successfully created with ID: ', 'linkssh' ) . $post_id;
-				$success = true;
+				$message  = __( 'Short link successfully created with ID: ', 'linkssh' ) . $post_id;
+				$new_link = get_home_url( null, $short_url_slug );
+				$success  = true;
 			} else {
 				$message = __( 'Error creating short link', 'linkssh' );
 			}
@@ -295,7 +297,8 @@ class LinkSh_Core {
 
 		return (object) [
 			'success' => $success,
-			'message' => $message
+			'message' => $message,
+			'newLink' => $new_link,
 		];
 	}
 
