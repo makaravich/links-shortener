@@ -188,7 +188,7 @@ class LinkSh_Core {
 	 *
 	 * @return string
 	 */
-	function generate_random_slug( int $length = 8 ): string {
+	public static function generate_random_slug( int $length = 8 ): string {
 		$characters        = '0123456789abcdefghijklmnopqrstuvwxyz';
 		$characters_length = strlen( $characters );
 		$random_slug       = '';
@@ -206,7 +206,7 @@ class LinkSh_Core {
 	 *
 	 * @return mixed|string
 	 */
-	function get_page_title( $url ): mixed {
+	public static function get_page_title( $url ): mixed {
 		// Perform an HTTP request
 		$response = wp_remote_get( $url );
 
@@ -237,13 +237,21 @@ class LinkSh_Core {
 	 *
 	 * @return object|string
 	 */
-	public function add_shorted_link_post( $long_url, $short_url_slug ): object|string {
+	public static function add_shorted_link_post( $long_url, $short_url_slug ): object|string {
+		//Exit if $long_url is invalid
+		if ( ! wp_http_validate_url( $long_url ) ) {
+			return (object) [
+				'success' => false,
+				'message' => __( 'The URL is invalid', 'linkssh' ),
+			];
+		}
+
 		$message = '';
 		$success = false;
 
 		// If $short_url_slug is empty, generate a random value
 		if ( empty( $short_url_slug ) ) {
-			$short_url_slug = $this->generate_random_slug( 10 );
+			$short_url_slug = self::generate_random_slug( 10 );
 		}
 
 		// Check for the uniqueness of short_url_slug
@@ -257,7 +265,7 @@ class LinkSh_Core {
 
 		if ( empty( $existing_posts ) ) {
 			// Get the page title
-			$post_title = $this->get_page_title( $long_url );
+			$post_title = self::get_page_title( $long_url );
 
 			// Data for the new post
 			$post_data = array(
@@ -306,7 +314,7 @@ class LinkSh_Core {
 			$short_url_slug = sanitize_text_field( $_POST['short_url'] ) ?? '';
 
 			// Try to add the shorted link post and capture the result
-			$result = $this->add_shorted_link_post( $long_url, $short_url_slug );
+			$result = self::add_shorted_link_post( $long_url, $short_url_slug );
 
 			// Check the result and add the appropriate message
 			if ( is_object( $result ) && $result->success ) {
