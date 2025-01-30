@@ -232,12 +232,14 @@ class LinkSh_Core {
 	}
 
 	/**
-	 * @param $long_url
-	 * @param $short_url_slug
+	 * @param string $long_url URL to be shorted
+	 * @param string $short_url_slug slug for the new short link
+	 * @param array $args array of arguments for the function. Available keys:
+	 * - post_author: ID of user
 	 *
 	 * @return object|string
 	 */
-	public static function add_shorted_link_post( $long_url, $short_url_slug ): object|string {
+	public static function add_shorted_link_post( string $long_url, string $short_url_slug = '', array $args = [] ): object|string {
 		//Exit if $long_url is invalid
 		if ( ! wp_http_validate_url( $long_url ) ) {
 			return (object) [
@@ -245,6 +247,8 @@ class LinkSh_Core {
 				'message' => __( 'The URL is invalid', 'linkssh' ),
 			];
 		}
+
+		$args = apply_filters( 'create_short_link_args', $args );
 
 		$message  = '';
 		$success  = false;
@@ -268,11 +272,15 @@ class LinkSh_Core {
 			// Get the page title
 			$post_title = self::get_page_title( $long_url );
 
+			//Define the author
+			$post_author = $args['post_author'] ?? get_current_user_id();
+
 			// Data for the new post
 			$post_data = array(
 				'post_title'  => $post_title,
 				'post_status' => 'publish',
 				'post_type'   => LINKSH_POST_TYPE,
+				'post_author' => $post_author,
 			);
 
 			// Create the post
