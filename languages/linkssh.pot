@@ -1,0 +1,134 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Links shortener\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-03 13:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.7.1; wp-6.7.1\n"
+"X-Domain: linkssh"
+
+#: includes/class-LinksSh_CPT.php:32
+msgid "Add Links Shortener Item"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:34
+msgid "Adding Links Shortener Item"
+msgstr ""
+
+#. Description of the plugin
+msgid "Allows you to add link shortener to your site"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:99
+msgid "Date"
+msgstr ""
+
+#. Author of the plugin
+msgid "Dzmitry Makarski"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:36
+msgid "Edit Links Shortener Item"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:299
+msgid "Error creating short link"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:127
+msgid "Extended Log:"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:42
+msgid "Find Links Shortener Items"
+msgstr ""
+
+#: includes/class-LinkSh_Ajax.php:54
+msgid "Full URL of the long link"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:28 includes/class-LinksSh_CPT.php:30
+msgid "Links Shortener"
+msgstr ""
+
+#. Name of the plugin
+#: includes/class-LinksSh_CPT.php:48
+msgid "Links shortener"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:113
+msgid "Long URL:"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:38
+msgid "New Links Shortener Item"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:44
+msgid "Not Found"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:123
+msgid "Redirect Count:"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:100
+msgid "Redirects Count"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:341
+msgid "Required fields are missing."
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:40
+msgid "See Links Shortener Item"
+msgstr ""
+
+#: includes/class-LinkSh_Ajax.php:59
+msgid "Short link slug"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:295
+msgid "Short link successfully created with ID: "
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:303
+msgid "Short link with this slug already exists"
+msgstr ""
+
+#: includes/class-LinkSh_Ajax.php:64
+msgid "Short the link"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:98
+msgid "Short URL"
+msgstr ""
+
+#: includes/class-LinksSh_CPT.php:119
+msgid "Short URL:"
+msgstr ""
+
+#: includes/class-LinkSh_Ajax.php:50
+msgid "Short your link"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:247
+msgid "The URL is invalid"
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:337
+msgid "There was an error adding the link."
+msgstr ""
+
+#: includes/class-LinkSh_Core.php:97
+msgid "Title"
+msgstr ""
