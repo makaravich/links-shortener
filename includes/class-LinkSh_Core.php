@@ -185,15 +185,25 @@ class LinkSh_Core {
 	 * Generates a random URL-friendly slug
 	 *
 	 * @param int $length
+	 * @param int $iteration
 	 *
 	 * @return string
 	 */
-	public static function generate_random_slug( int $length = 8 ): string {
+	public static function generate_random_slug( int $length = 4, int $iteration = 0 ): string {
+		if ( $iteration >= 10 ) {
+			$length ++;
+			$iteration = 0;
+		}
+
 		$characters        = '0123456789abcdefghijklmnopqrstuvwxyz';
 		$characters_length = strlen( $characters );
 		$random_slug       = '';
 		for ( $i = 0; $i < $length; $i ++ ) {
 			$random_slug .= $characters[ rand( 0, $characters_length - 1 ) ];
+		}
+
+		if ( ! self::is_slug_unique( $random_slug ) ) {
+			$random_slug = self::generate_random_slug( $length, $iteration + 1 );
 		}
 
 		return $random_slug;
@@ -256,19 +266,10 @@ class LinkSh_Core {
 
 		// If $short_url_slug is empty, generate a random value
 		if ( empty( $short_url_slug ) ) {
-			$short_url_slug = self::generate_random_slug( 10 );
+			$short_url_slug = self::generate_random_slug();
 		}
 
-		// Check for the uniqueness of short_url_slug
-		$existing_posts = get_posts( array(
-			'post_type'      => LINKSH_POST_TYPE,
-			'meta_key'       => LINKSH_SHORT_URL_META_NAME,
-			'meta_value'     => $short_url_slug,
-			'posts_per_page' => 1,
-			'fields'         => 'ids'
-		) );
-
-		if ( empty( $existing_posts ) ) {
+		if ( self::is_slug_unique( $short_url_slug ) ) {
 			// Get the page title
 			$post_title = self::get_page_title( $long_url );
 
@@ -308,6 +309,25 @@ class LinkSh_Core {
 			'message' => $message,
 			'newLink' => $new_link,
 		];
+	}
+
+	/**
+	 * Check for the uniqueness of short_url_slug
+	 *
+	 * @param $slug
+	 *
+	 * @return bool
+	 */
+	private static function is_slug_unique( $slug ): bool {
+		$existing_posts = get_posts( array(
+			'post_type'      => LINKSH_POST_TYPE,
+			'meta_key'       => LINKSH_SHORT_URL_META_NAME,
+			'meta_value'     => $slug,
+			'posts_per_page' => 1,
+			'fields'         => 'ids'
+		) );
+
+		return empty( $existing_posts );
 	}
 
 	/**
