@@ -394,6 +394,23 @@ class LinkSh_Core {
 		// Display the settings errors
 		settings_errors( 'link_shortener_messages' );
 	}
+
+	/**
+	 * Returns short link by post ID
+	 *
+	 * @param $post_id
+	 *
+	 * @return string|false
+	 */
+	public static function get_short_link_by_post_id( $post_id ): string|false {
+		$slug = get_post_field( LINKSH_SHORT_URL_META_NAME, $post_id );
+
+		if ( ! $slug ) {
+			return false;
+		} else {
+			return get_home_url( null, $slug );
+		}
+	}
 }
 
 new LinkSh_Core();
