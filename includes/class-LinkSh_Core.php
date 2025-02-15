@@ -411,6 +411,34 @@ class LinkSh_Core {
 			return get_home_url( null, $slug );
 		}
 	}
+
+	/**
+	 * Returns long link by post ID
+	 *
+	 * @param $post_id
+	 *
+	 * @return string|false
+	 */
+	public static function get_long_link_by_post_id( $post_id ): string|false {
+		$link = get_post_field( LINKSH_LONG_URL_META_NAME, $post_id );
+
+		if ( ! $link ) {
+			return false;
+		} else {
+			return $link;
+		}
+	}
+
+	/**
+	 * Return link redirect count by post ID
+	 *
+	 * @param $post_id
+	 *
+	 * @return string|false
+	 */
+	public static function get_link_use_count( $post_id ): string|false {
+		return get_post_field( LINKSH_REDIRECT_COUNT_META_NAME, $post_id );
+	}
 }
 
 new LinkSh_Core();
