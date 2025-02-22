@@ -439,6 +439,66 @@ class LinkSh_Core {
 	public static function get_link_use_count( $post_id ): string|false {
 		return get_post_field( LINKSH_REDIRECT_COUNT_META_NAME, $post_id );
 	}
+
+	/**
+	 * Generate and save a CSV file with redirection log data
+	 *
+	 * @param $redirect_id
+	 *
+	 * @return string|WP_Error Path to the generated CSV file or WP_Error on failure
+	 */
+	public function generate_redirects_log_csv( $redirect_id ): WP_Error|string {
+		global $wpdb;
+
+		// Get the table name
+		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
+
+		// Query to fetch data for the given redirect_id
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT datetime, target_url, ip_address, referrer 
+             FROM {$table_name} 
+             WHERE redirect_id = %d",
+				$redirect_id
+			)
+		);
+
+		// Check if we have results
+		if ( empty( $results ) ) {
+			return new WP_Error( 'no_data', 'No redirects found for this ID.' );
+		}
+
+		// Define the file name
+		$file_name = 'redirects_log_' . sanitize_file_name( wp_strip_all_tags( $redirect_id ) ) . '_' . date( 'Y-m-d_H-i-s' ) . '.csv';
+
+		// Get the uploads directory
+		$upload_dir = wp_upload_dir();
+		$file_path = trailingslashit( $upload_dir['basedir'] ) . $file_name;
+
+		// Open the file for writing
+		if ( ! $handle = fopen( $file_path, 'w' ) ) {
+			return new WP_Error( 'file_error', 'Unable to create the CSV file.' );
+		}
+
+		// Write the header row
+		fputcsv( $handle, [ 'Datetime', 'Target URL', 'IP Address', 'Referrer' ] );
+
+		// Write each result as a row in the CSV file
+		foreach ( $results as $row ) {
+			fputcsv( $handle, [
+				esc_html( $row->datetime ),
+				esc_url( $row->target_url ),
+				esc_html( $row->ip_address ),
+				esc_url( $row->referrer )
+			] );
+		}
+
+		// Close the file handle
+		fclose( $handle );
+
+		// Return the path to the generated file
+		return $file_path;
+	}
 }
 
 new LinkSh_Core();
