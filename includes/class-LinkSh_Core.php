@@ -447,7 +447,7 @@ class LinkSh_Core {
 	 *
 	 * @return string|WP_Error Path to the generated CSV file or WP_Error on failure
 	 */
-	public function generate_redirects_log_csv( $redirect_id ): WP_Error|string {
+	public static function generate_redirects_log_csv( $redirect_id ): WP_Error|string {
 		global $wpdb;
 
 		// Get the table name
@@ -473,7 +473,7 @@ class LinkSh_Core {
 
 		// Get the uploads directory
 		$upload_dir = wp_upload_dir();
-		$file_path = trailingslashit( $upload_dir['basedir'] ) . $file_name;
+		$file_path  = trailingslashit( $upload_dir['basedir'] ) . $file_name;
 
 		// Open the file for writing
 		if ( ! $handle = fopen( $file_path, 'w' ) ) {
@@ -489,7 +489,7 @@ class LinkSh_Core {
 				esc_html( $row->datetime ),
 				esc_url( $row->target_url ),
 				esc_html( $row->ip_address ),
-				esc_url( $row->referrer )
+				esc_attr( $row->referrer )
 			] );
 		}
 
