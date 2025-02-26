@@ -106,12 +106,10 @@ class LinkSh_Redirects {
                 $long_url = get_post_meta(get_the_ID(), LINKSH_LONG_URL_META_NAME, true);
 
                 if (!empty($long_url)) {
-                    //$this->update_redirects_count();
-
                     $this->update_extended_log(get_the_ID());
 
                     // Perform the redirect
-                    wp_redirect($long_url, 301);
+                    wp_redirect($long_url);
                     exit;
                 }
             }
