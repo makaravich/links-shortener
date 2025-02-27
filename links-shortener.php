@@ -8,7 +8,7 @@
  * @wordpress-plugin
  * Plugin Name:       Links shortener
  * Description:       Allows you to add link shortener to your site
- * Version:           0.0.1
+ * Version:           0.1.1
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            Dzmitry Makarski

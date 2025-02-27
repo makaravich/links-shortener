@@ -139,7 +139,7 @@ class LinksSh_CPT {
 	 *
 	 * @return string
 	 */
-	public function render_redirects_table( $redirect_id ): string {
+	public function render_redirects_table($redirect_id): string {
 		global $wpdb;
 
 		// Get the table name
@@ -148,9 +148,9 @@ class LinksSh_CPT {
 		// Query to fetch data for the given redirect_id
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT datetime, target_url, ip_address, referrer 
-                 FROM {$table_name} 
-                 WHERE redirect_id = %d",
+				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type, utm_source, utm_medium, utm_campaign 
+             FROM {$table_name} 
+             WHERE redirect_id = %d",
 				$redirect_id
 			)
 		);
@@ -163,23 +163,36 @@ class LinksSh_CPT {
 		$html .= '<th>Target URL</th>';
 		$html .= '<th>IP Address</th>';
 		$html .= '<th>Referrer</th>';
+		$html .= '<th>User Agent</th>';
+		$html .= '<th>Accept Language</th>';
+		$html .= '<th>OS</th>';
+		$html .= '<th>Device Type</th>';
+		$html .= '<th>UTM Source</th>';
+		$html .= '<th>UTM Medium</th>';
+		$html .= '<th>UTM Campaign</th>';
 		$html .= '</tr>';
 		$html .= '</thead>';
 		$html .= '<tbody>';
 
 		// Check if we have results
-		if ( ! empty( $results ) ) {
-			foreach ( $results as $row ) {
+		if (!empty($results)) {
+			foreach ($results as $row) {
 				$html .= '<tr>';
-				$html .= '<td>' . esc_html( $row->datetime ) . '</td>';
-				$html .= '<td><a href="' . esc_url( $row->target_url ) . '" target="_blank">' . esc_html( $row->target_url ) . '</a></td>';
-				$html .= '<td>' . esc_html( $row->ip_address ) . '</td>';
-				$html .= '<td><a href="' . esc_url( $row->referrer ) . '" target="_blank">' . esc_html( $row->referrer ) . '</a></td>';
+				$html .= '<td>' . esc_html($row->datetime) . '</td>';
+				$html .= '<td><a href="' . esc_url($row->target_url) . '" target="_blank">' . esc_html($row->target_url) . '</a></td>';
+				$html .= '<td>' . esc_html($row->ip_address) . '</td>';
+				$html .= '<td>' . esc_html($row->referrer) . '</td>';
+				$html .= '<td>' . esc_html($row->user_agent) . '</td>';
+				$html .= '<td>' . esc_html($row->accept_language) . '</td>';
+				$html .= '<td>' . esc_html($row->os) . '</td>';
+				$html .= '<td>' . esc_html($row->device_type) . '</td>';
+				$html .= '<td>' . esc_html($row->utm_source) . '</td>';
+				$html .= '<td>' . esc_html($row->utm_medium) . '</td>';
+				$html .= '<td>' . esc_html($row->utm_campaign) . '</td>';
 				$html .= '</tr>';
 			}
 		} else {
-			// If no results, show a message
-			$html .= '<tr><td colspan="4" style="text-align: center;">No redirects found for this ID.</td></tr>';
+			$html .= '<tr><td colspan="11" style="text-align: center;">No redirects found for this ID.</td></tr>';
 		}
 
 		$html .= '</tbody>';
@@ -188,7 +201,6 @@ class LinksSh_CPT {
 		// Return the generated HTML
 		return $html;
 	}
-
 
 	/**
 	 * Save meta box data

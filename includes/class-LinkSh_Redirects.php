@@ -39,33 +39,80 @@ class LinkSh_Redirects {
      * @param $redirect_id
      * @return void
      */
-    private function update_extended_log($redirect_id): void {
-        global $wpdb;
+	private function update_extended_log($redirect_id): void {
+		global $wpdb;
 
-        // Get the target URL from the Redirection Post
-        $target_url = get_post_meta($redirect_id, LINKSH_LONG_URL_META_NAME, true);;
+		// Get the target URL from the Redirection Post
+		$target_url = get_post_meta($redirect_id, LINKSH_LONG_URL_META_NAME, true);
 
-        // Get the table name
-        $table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
+		// Get the table name
+		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
 
-        // Automatically populate variables
-        $ip_address = $_SERVER['REMOTE_ADDR'];
-        $referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
+		// Automatically populate variables
+		$ip_address = $_SERVER['REMOTE_ADDR'];
+		$referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
+		$user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
+		$accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'Unknown';
 
-        // Insert the record into the database
-        $wpdb->insert(
-            $table_name,
-            [
-                'redirect_id' => $redirect_id,
-                //'datetime' => current_time('mysql'), // Get current time in MySQL format
-                'target_url' => $target_url,
-                'ip_address' => $ip_address,
-                'referrer' => $referrer,
-            ]
-        );
+		// Extract OS and device type from User-Agent
+		$os = $this->get_os($user_agent);
+		$device_type = $this->get_device_type($user_agent);
 
-        $this->update_redirects_count($redirect_id);
-    }
+		// Get UTM parameters from the referrer or request URL
+		$utm_source = $_GET['utm_source'] ?? null;
+		$utm_medium = $_GET['utm_medium'] ?? null;
+		$utm_campaign = $_GET['utm_campaign'] ?? null;
+
+		// Insert the record into the database
+		$wpdb->insert(
+			$table_name,
+			[
+				'redirect_id' => $redirect_id,
+				'datetime' => current_time('mysql'),
+				'target_url' => $target_url,
+				'ip_address' => $ip_address,
+				'referrer' => $referrer,
+				'user_agent' => $user_agent,
+				'accept_language' => $accept_language,
+				'os' => $os,
+				'device_type' => $device_type,
+				'utm_source' => $utm_source,
+				'utm_medium' => $utm_medium,
+				'utm_campaign' => $utm_campaign
+			]
+		);
+
+		$this->update_redirects_count($redirect_id);
+	}
+
+	/**
+	 * Get OS from User Agent
+	 *
+	 * @param $user_agent
+	 *
+	 * @return string
+	 */
+	private function get_os($user_agent): string {
+		if ( str_contains( $user_agent, 'Windows' ) ) return 'Windows';
+		if ( str_contains( $user_agent, 'Mac' ) ) return 'MacOS';
+		if ( str_contains( $user_agent, 'Linux' ) ) return 'Linux';
+		if ( str_contains( $user_agent, 'Android' ) ) return 'Android';
+		if ( str_contains( $user_agent, 'iPhone' ) ) return 'iOS';
+		return 'Unknown';
+	}
+
+	/**
+	 * Get Device type by User Agent
+	 *
+	 * @param $user_agent
+	 *
+	 * @return string
+	 */
+	private function get_device_type($user_agent): string {
+		if (preg_match('/mobile|android|iphone|ipad/i', $user_agent)) return 'Mobile';
+		return 'Desktop';
+	}
+
 
     /**
      * Redirects using existing redirections
