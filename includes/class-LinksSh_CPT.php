@@ -50,9 +50,10 @@ class LinksSh_CPT {
 			'description'   => '',
 			'public'        => false,  // Disable public access
 			'show_ui'       => true,   // Still show in admin panel
-			'show_in_menu'  => 'tools.php',
+			'show_in_menu'  => true,
 			'show_in_rest'  => false,
 			'menu_position' => 80,
+            'menu_icon'     => 'dashicons-admin-links',
 			'hierarchical'  => false,
 			'supports'      => [ 'author' ],
 			'has_archive'   => false,  // Disable archives
@@ -148,7 +149,7 @@ class LinksSh_CPT {
 		// Query to fetch data for the given redirect_id
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type, utm_source, utm_medium, utm_campaign 
+				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type 
              FROM {$table_name} 
              WHERE redirect_id = %d",
 				$redirect_id
@@ -167,9 +168,6 @@ class LinksSh_CPT {
 		$html .= '<th>Accept Language</th>';
 		$html .= '<th>OS</th>';
 		$html .= '<th>Device Type</th>';
-		$html .= '<th>UTM Source</th>';
-		$html .= '<th>UTM Medium</th>';
-		$html .= '<th>UTM Campaign</th>';
 		$html .= '</tr>';
 		$html .= '</thead>';
 		$html .= '<tbody>';
@@ -186,9 +184,6 @@ class LinksSh_CPT {
 				$html .= '<td>' . esc_html($row->accept_language) . '</td>';
 				$html .= '<td>' . esc_html($row->os) . '</td>';
 				$html .= '<td>' . esc_html($row->device_type) . '</td>';
-				$html .= '<td>' . esc_html($row->utm_source) . '</td>';
-				$html .= '<td>' . esc_html($row->utm_medium) . '</td>';
-				$html .= '<td>' . esc_html($row->utm_campaign) . '</td>';
 				$html .= '</tr>';
 			}
 		} else {

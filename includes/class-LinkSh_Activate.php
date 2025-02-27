@@ -24,9 +24,6 @@ class LinkSh_Activate {
             accept_language VARCHAR(64) NOT NULL,
             os VARCHAR(32) NOT NULL,
             device_type VARCHAR(32) NOT NULL,
-            utm_source VARCHAR(64) NULL,
-            utm_medium VARCHAR(64) NULL,
-            utm_campaign VARCHAR(64) NULL,
             PRIMARY KEY (id),
             INDEX redirect_id (redirect_id),
             INDEX datetime (datetime)
@@ -41,10 +38,7 @@ class LinkSh_Activate {
             ADD COLUMN user_agent TEXT NOT NULL AFTER referrer,
             ADD COLUMN accept_language VARCHAR(128) NOT NULL AFTER user_agent,
             ADD COLUMN os VARCHAR(32) NOT NULL AFTER accept_language,
-            ADD COLUMN device_type VARCHAR(32) NOT NULL AFTER os,
-            ADD COLUMN utm_source VARCHAR(64) NULL AFTER device_type,
-            ADD COLUMN utm_medium VARCHAR(64) NULL AFTER utm_source,
-            ADD COLUMN utm_campaign VARCHAR(64) NULL AFTER utm_medium;";
+            ADD COLUMN device_type VARCHAR(32) NOT NULL AFTER os;";
 
 			$wpdb->query( $sql );
 		}

@@ -60,11 +60,6 @@ class LinkSh_Redirects {
 		$os          = $this->get_os( $user_agent );
 		$device_type = $this->get_device_type( $user_agent );
 
-		// Get UTM parameters from the referrer or request URL
-		$utm_source   = $_GET['utm_source'] ?? null;
-		$utm_medium   = $_GET['utm_medium'] ?? null;
-		$utm_campaign = $_GET['utm_campaign'] ?? null;
-
 		// Insert the record into the database
 		$wpdb->insert(
 			$table_name,
@@ -78,9 +73,6 @@ class LinkSh_Redirects {
 				'accept_language' => $accept_language,
 				'os'              => $os,
 				'device_type'     => $device_type,
-				'utm_source'      => $utm_source,
-				'utm_medium'      => $utm_medium,
-				'utm_campaign'    => $utm_campaign
 			]
 		);
 
