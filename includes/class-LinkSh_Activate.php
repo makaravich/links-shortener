@@ -39,7 +39,7 @@ class LinkSh_Activate {
 			// SQL query to update the existing table structure
 			$sql = "ALTER TABLE {$table_name}
             ADD COLUMN user_agent TEXT NOT NULL AFTER referrer,
-            ADD COLUMN accept_language VARCHAR(64) NOT NULL AFTER user_agent,
+            ADD COLUMN accept_language VARCHAR(128) NOT NULL AFTER user_agent,
             ADD COLUMN os VARCHAR(32) NOT NULL AFTER accept_language,
             ADD COLUMN device_type VARCHAR(32) NOT NULL AFTER os,
             ADD COLUMN utm_source VARCHAR(64) NULL AFTER device_type,

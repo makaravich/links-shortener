@@ -456,7 +456,7 @@ class LinkSh_Core {
 		// Query to fetch data for the given redirect_id
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT datetime, target_url, ip_address, referrer, user_agent, language, os, device_type, utm_source, utm_medium, utm_campaign 
+				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type, utm_source, utm_medium, utm_campaign 
              FROM {$table_name} 
              WHERE redirect_id = %d",
 				$redirect_id
@@ -491,7 +491,7 @@ class LinkSh_Core {
 				esc_html( $row->ip_address ),
 				esc_attr( $row->referrer ),
 				esc_html( $row->user_agent ),
-				esc_html( $row->language ),
+				esc_html( $row->accept_language ),
 				esc_html( $row->os ),
 				esc_html( $row->device_type ),
 				esc_html( $row->utm_source ),
