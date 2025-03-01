@@ -32,15 +32,6 @@ class LinkSh_Activate {
 			// Include WordPress library to execute SQL
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta( $sql );
-		} else {
-			// SQL query to update the existing table structure
-			$sql = "ALTER TABLE {$table_name}
-            ADD COLUMN user_agent TEXT NOT NULL AFTER referrer,
-            ADD COLUMN accept_language VARCHAR(128) NOT NULL AFTER user_agent,
-            ADD COLUMN os VARCHAR(32) NOT NULL AFTER accept_language,
-            ADD COLUMN device_type VARCHAR(32) NOT NULL AFTER os;";
-
-			$wpdb->query( $sql );
 		}
 	}
 }

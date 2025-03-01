@@ -3,14 +3,15 @@
  * Links shortener
  *
  * @author        Dzmitry Makarski
- * @version       0.1.2
+ * @version       0.1.0
  *
  * @wordpress-plugin
  * Plugin Name:       Links shortener
  * Description:       Allows you to add link shortener to your site
- * Version:           0.1.2
+ * Version:           0.1.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
+ * License:           GPLv2
  * Author:            Dzmitry Makarski
  * Text Domain:       linkssh
  * Domain Path:       /languages
