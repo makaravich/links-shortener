@@ -27,8 +27,6 @@ const LINKSH_LOG_TABLE_NAME           = 'redirects_log';
 const LINKSH_LONG_URL_META_NAME       = 'long_url';
 const LINKSH_SHORT_URL_META_NAME      = 'short_url_slug';
 const LINKSH_REDIRECT_COUNT_META_NAME = 'redirects_count';
-const LINKSH_EXTENDED_LOG_META_NAME   = 'linkssh_extended_log';
-
 
 define( 'LINKSH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'LINKSH_PLUGIN_BASEPATH', plugin_dir_path( __FILE__ ) );

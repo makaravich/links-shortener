@@ -31,7 +31,7 @@ class LinksSh_CPT {
 				// To add a new post.
 				'add_new'           => __( 'Add Links Shortener Item', 'linkssh' ),
 				// Title for a newly created post in the admin panel.
-				'add_new_item'      => __( 'Adding Links Shortener Item', 'linkssh' ),
+				'add_new_item'      => __( 'Add Links Shortener Item', 'linkssh' ),
 				// For editing post type.
 				'edit_item'         => __( 'Edit Links Shortener Item', 'linkssh' ),
 				// New post's text.
@@ -103,7 +103,6 @@ class LinksSh_CPT {
 		$long_url             = get_post_meta( $post->ID, LINKSH_LONG_URL_META_NAME, true );
 		$short_url_slug       = get_post_meta( $post->ID, LINKSH_SHORT_URL_META_NAME, true );
 		$redirects_count      = get_post_meta( $post->ID, LINKSH_REDIRECT_COUNT_META_NAME, true );
-		$linkssh_extended_log = get_post_meta( $post->ID, LINKSH_EXTENDED_LOG_META_NAME, true );
 
 		// Use nonce for verification
 		wp_nonce_field( 'linksh_save_meta_box_data', 'linksh_meta_box_nonce' );
@@ -127,8 +126,6 @@ class LinksSh_CPT {
         <div class="single-field">
             <label class="label" for="linksh_extended_log"><?php _e( 'Extended Log:', 'linkssh' ) ?></label>
 			<?php echo $this->render_redirects_table( $post->ID ) ?>
-            <!--<textarea id="linksh_extended_log" name="linksh_extended_log" rows="10" cols="80"
-                      readonly><?php /*echo esc_textarea($linkssh_extended_log); */ ?></textarea>-->
         </div>
 		<?php
 	}
