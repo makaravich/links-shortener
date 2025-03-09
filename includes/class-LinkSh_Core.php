@@ -527,18 +527,28 @@ class LinkSh_Core {
 			// Create the CSV title
 			$csv_content = "Datetime,Target URL,IP Address,Referrer,User Agent,Language,OS,Device Type\n";
 
-			// Add results strings
+			// Add rows to the CSV
 			foreach ( $results as $row ) {
-				$csv_content .= implode( ',', [
-						esc_html( $row->datetime ),
-						esc_url( $row->target_url ),
-						esc_html( $row->ip_address ),
-						esc_attr( $row->referrer ),
-						esc_html( $row->user_agent ),
-						esc_html( $row->accept_language ),
-						esc_html( $row->os ),
-						esc_html( $row->device_type )
-					] ) . "\n";
+				$data = [
+					$row->datetime,
+					$row->target_url,
+					$row->ip_address,
+					$row->referrer,
+					$row->user_agent,
+					$row->accept_language,
+					$row->os,
+					$row->device_type
+				];
+
+				// Ensure valid UTF-8 and escape necessary values
+				foreach ( $data as &$value ) {
+					$value = wp_check_invalid_utf8( $value ); // Filter invalid UTF-8
+					$value = str_replace( '"', '""', $value ); // Escape double quotes
+					$value = '"' . $value . '"'; // Wrap in double quotes
+				}
+
+				// Add formatted row to CSV content
+				$csv_content .= implode( ',', $data ) . "\n";
 			}
 
 			// Write to file
