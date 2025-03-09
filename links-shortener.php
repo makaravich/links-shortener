@@ -9,11 +9,11 @@
  * Plugin Name:       Links shortener
  * Description:       Allows you to add link shortener to your site
  * Version:           0.1.0
- * Requires at least: 6.0
+ * Requires at least: 6.2
  * Requires PHP:      8.0
  * License:           GPLv2
  * Author:            Dzmitry Makarski
- * Text Domain:       linkssh
+ * Text Domain:       links-shortener
  * Domain Path:       /languages
  */
 

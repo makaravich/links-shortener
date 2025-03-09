@@ -43,4 +43,8 @@
   text-align: left;
 }
 
+.post-type-links_shrt a.page-title-action {
+  display: none;
+}
+
 /*# sourceMappingURL=admin.css.map */

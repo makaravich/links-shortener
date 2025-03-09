@@ -94,10 +94,10 @@ class LinkSh_Core {
 		return apply_filters( 'linksh_posts_table_columns', [
 
 			'cb'              => '<input type="checkbox" />',
-			'ls_title'        => __( 'Title', 'linkssh' ),
-			'short_url'       => __( 'Short URL', 'linkssh' ),
-			'date'            => __( 'Date', 'linkssh' ),
-			'redirects_count' => __( 'Redirects Count', 'linkssh' )
+			'ls_title'        => __( 'Title', 'links-shortener' ),
+			'short_url'       => __( 'Short URL', 'links-shortener' ),
+			'date'            => __( 'Date', 'links-shortener' ),
+			'redirects_count' => __( 'Redirects Count', 'links-shortener' )
 		] );
 	}
 
@@ -116,7 +116,9 @@ class LinkSh_Core {
 				$short_url = home_url() . '/' . get_post_meta( $post_id, LINKSH_SHORT_URL_META_NAME, true );
 				$short_url = sprintf( '<a href="%s" target="_blank">%s</a>',
 					$short_url, $short_url );
-				echo $short_url;
+				echo wp_kses( $short_url, [
+					'a' => [ 'href' => [], 'class' => [], 'target' => [] ],
+				] );
 				break;
 			case 'redirects_count':
 				$redirects = get_post_meta( $post_id, LINKSH_REDIRECT_COUNT_META_NAME, true ) ?? '0';
@@ -124,7 +126,7 @@ class LinkSh_Core {
 					$redirects = '0';
 				}
 
-				echo $redirects;
+				echo esc_attr( $redirects );
 				break;
 			case 'ls_title':
 				$the_title    = get_the_title( $post_id );
@@ -134,7 +136,12 @@ class LinkSh_Core {
 					$ls_title .= '<span class="long-url">' . $the_long_url . '</span>';
 				}
 
-				echo $ls_title;
+				echo wp_kses( $ls_title, [
+					'a'    => [ 'href' => [], 'class' => [], 'aria-label' => [] ],
+					'br'   => [],
+					'span' => [ 'class' => [] ]
+				] );
+
 				break;
 		}
 	}
@@ -199,7 +206,7 @@ class LinkSh_Core {
 		$characters_length = strlen( $characters );
 		$random_slug       = '';
 		for ( $i = 0; $i < $length; $i ++ ) {
-			$random_slug .= $characters[ rand( 0, $characters_length - 1 ) ];
+			$random_slug .= $characters[ wp_rand( 0, $characters_length - 1 ) ];
 		}
 
 		if ( ! self::is_slug_unique( $random_slug ) ) {
@@ -254,7 +261,7 @@ class LinkSh_Core {
 		if ( ! wp_http_validate_url( $long_url ) ) {
 			return (object) [
 				'success' => false,
-				'message' => __( 'The URL is invalid', 'linkssh' ),
+				'message' => __( 'The URL is invalid', 'links-shortener' ),
 			];
 		}
 
@@ -293,15 +300,15 @@ class LinkSh_Core {
 				update_post_meta( $post_id, LINKSH_SHORT_URL_META_NAME, $short_url_slug );
 				update_post_meta( $post_id, LINKSH_REDIRECT_COUNT_META_NAME, 0 );
 
-				$message  = __( 'Short link successfully created with ID: ', 'linkssh' ) . $post_id;
+				$message  = __( 'Short link successfully created with ID: ', 'links-shortener' ) . $post_id;
 				$new_link = get_home_url( null, $short_url_slug );
 				$success  = true;
 			} else {
-				$message = __( 'Error creating short link', 'linkssh' );
+				$message = __( 'Error creating short link', 'links-shortener' );
 			}
 
 		} else {
-			$message = __( 'Short link with this slug already exists', 'linkssh' );
+			$message = __( 'Short link with this slug already exists', 'links-shortener' );
 		}
 
 		return (object) [
@@ -338,27 +345,53 @@ class LinkSh_Core {
 	function process_link_shortener_form(): void {
 		status_header( 200 );
 
-		// Check if the necessary fields are set
-		if ( isset( $_POST['long_url'] ) ) {
-			// Sanitize the input data
-			$long_url       = sanitize_url( $_POST['long_url'] );
-			$short_url_slug = sanitize_text_field( $_POST['short_url'] ) ?? '';
+		//Get redirect URL
+		if ( ! empty( $_POST['linksh_source_page'] ) ) {
+			$source_page = esc_url_raw( wp_unslash( $_POST['linksh_source_page'] ) );
+		} else {
+			$source_page = false;
+		}
 
-			// Try to add the shorted link post and capture the result
-			$result = self::add_shorted_link_post( $long_url, $short_url_slug );
+		// Check nonce
+		if ( ! isset( $_POST['links-shortener-new-link-nonce'] ) ||
+		     wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['links-shortener-new-link-nonce'] ) ), 'LinksShortener2025' ) ) {
+			$nonce_ok = true;
+		} else {
+			$nonce_ok = false;
+		}
 
-			// Check the result and add the appropriate message
-			if ( is_object( $result ) && $result->success ) {
-				// Add a success message
-				$message      = $result->message;
-				$message_type = 'success';
+		if ( $nonce_ok ) {
+
+			// Check if the necessary fields are set
+			if ( isset( $_POST['long_url'] ) ) {
+				// Sanitize the input data
+				$long_url = sanitize_url( wp_unslash( $_POST['long_url'] ) );
+
+				if ( isset( $_POST['short_url'] ) ) {
+					$short_url_slug = sanitize_text_field( wp_unslash( $_POST['short_url'] ) );
+				} else {
+					$short_url_slug = '';
+				}
+
+				// Try to add the shorted link post and capture the result
+				$result = self::add_shorted_link_post( $long_url, $short_url_slug );
+
+				// Check the result and add the appropriate message
+				if ( is_object( $result ) && $result->success ) {
+					// Add a success message
+					$message      = $result->message;
+					$message_type = 'success';
+				} else {
+					// Add an error message
+					$message      = $result->message ?? __( 'There was an error adding the link.', 'links-shortener' );
+					$message_type = 'error';
+				}
 			} else {
-				// Add an error message
-				$message      = $result->message ?? __( 'There was an error adding the link.', 'linkssh' );
+				$message      = __( 'Required fields are missing.', 'links-shortener' );
 				$message_type = 'error';
 			}
 		} else {
-			$message      = __( 'Required fields are missing.', 'linkssh' );
+			$message      = __( 'Nonce is invalid', 'links-shortener' );
 			$message_type = 'error';
 		}
 
@@ -366,8 +399,10 @@ class LinkSh_Core {
 		set_transient( 'link_shortener_message', [ 'message' => $message, 'type' => $message_type ], 30 );
 
 		// Redirect back to the previous page
-		wp_redirect( wp_get_referer() );
-		exit();
+		if ( $source_page ) {
+			wp_redirect( $source_page );
+			exit();
+		}
 	}
 
 
@@ -448,68 +483,74 @@ class LinkSh_Core {
 	 * @return string|WP_Error Path to the generated CSV file or WP_Error on failure
 	 */
 	public static function generate_redirects_log_csv( $redirect_id ): WP_Error|string {
-		global $wpdb;
-
-		// Get the table name
-		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
-
-		// Query to fetch data for the given redirect_id
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type
-             FROM {$table_name} 
-             WHERE redirect_id = %d",
-				$redirect_id
-			)
-		);
-
-		// Check if we have results
-		if ( empty( $results ) ) {
-			return new WP_Error( 'no_data', 'No redirects found for this ID.' );
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		// Define the file name
-		$file_name = 'redirects_log_' . sanitize_file_name( wp_strip_all_tags( $redirect_id ) ) . '_' . date( 'Y-m-d_H-i-s' ) . '.csv';
+		WP_Filesystem();
+		global $wp_filesystem;
+		if ( $wp_filesystem ) {
+			global $wpdb;
 
-		// Get the uploads directory
-		$upload_dir = wp_upload_dir();
-		$file_path  = trailingslashit( $upload_dir['basedir'] ) . $file_name;
+			// Get the table name
+			$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
 
-		// Open the file for writing
-		if ( ! $handle = fopen( $file_path, 'w' ) ) {
-			return new WP_Error( 'file_error', 'Unable to create the CSV file.' );
+			// Query to fetch data for the given redirect_id
+			$cache_key = "redirect_logs_{$redirect_id}";
+			$results   = wp_cache_get( $cache_key, 'linksh_plugin' );
+
+			if ( $results === false ) {
+				// Request to custom database table
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$results = $wpdb->get_results( $wpdb->prepare(
+					"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type
+         					FROM %i WHERE redirect_id = %d",
+					[ $table_name, $redirect_id ]
+				) );
+
+				// Save the result into cache
+				wp_cache_set( $cache_key, $results, 'linksh_plugin', 300 );
+			}
+
+			// Check if we have results
+			if ( empty( $results ) ) {
+				return new WP_Error( 'no_data', 'No redirects found for this ID.' );
+			}
+
+			// Define the file name
+			$file_name = 'redirects_log_' . sanitize_file_name( wp_strip_all_tags( $redirect_id ) ) . '_' . gmdate( 'Y-m-d_H-i-s' ) . '.csv';
+
+			// Get the uploads directory
+			$upload_dir = wp_upload_dir();
+			$file_path  = trailingslashit( $upload_dir['basedir'] ) . $file_name;
+
+			// Create the CSV title
+			$csv_content = "Datetime,Target URL,IP Address,Referrer,User Agent,Language,OS,Device Type\n";
+
+			// Add results strings
+			foreach ( $results as $row ) {
+				$csv_content .= implode( ',', [
+						esc_html( $row->datetime ),
+						esc_url( $row->target_url ),
+						esc_html( $row->ip_address ),
+						esc_attr( $row->referrer ),
+						esc_html( $row->user_agent ),
+						esc_html( $row->accept_language ),
+						esc_html( $row->os ),
+						esc_html( $row->device_type )
+					] ) . "\n";
+			}
+
+			// Write to file
+			if ( ! $wp_filesystem->put_contents( $file_path, $csv_content, FS_CHMOD_FILE ) ) {
+				return new WP_Error( 'file_error', 'Unable to create the CSV file.' );
+			} else {
+				// Return the path to the generated file
+				return $file_path;
+			}
+		} else {
+			return '';
 		}
-
-		// Write the header row
-		fputcsv( $handle, [
-			'Datetime',
-			'Target URL',
-			'IP Address',
-			'Referrer',
-			'User Agent',
-			'Language',
-			'OS'
-		] );
-
-		// Write each result as a row in the CSV file
-		foreach ( $results as $row ) {
-			fputcsv( $handle, [
-				esc_html( $row->datetime ),
-				esc_url( $row->target_url ),
-				esc_html( $row->ip_address ),
-				esc_attr( $row->referrer ),
-				esc_html( $row->user_agent ),
-				esc_html( $row->accept_language ),
-				esc_html( $row->os ),
-				esc_html( $row->device_type )
-			] );
-		}
-
-		// Close the file handle
-		fclose( $handle );
-
-		// Return the path to the generated file
-		return $file_path;
 	}
 }
 

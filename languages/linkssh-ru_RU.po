@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.7.1; wp-6.7.1\n"
-"X-Domain: linkssh"
+"X-Domain: links-shortener"
 
 #: includes/class-LinksSh_CPT.php:32
 msgid "Add Links Shortener Item"

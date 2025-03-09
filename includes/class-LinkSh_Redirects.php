@@ -23,13 +23,20 @@ class LinkSh_Redirects {
 		// Get the table name
 		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
 
-		// Prepare the SQL query to count the records
-		$query = $wpdb->prepare(
-			"SELECT COUNT(*) FROM {$table_name} WHERE redirect_id = %d",
-			$redirect_id
-		);
+		// Cache key for redirects count
+		$cache_key       = "redirects_count_{$redirect_id}";
+		$redirects_count = wp_cache_get( $cache_key, 'linksh_plugin' );
 
-		$redirects_count = (int) $wpdb->get_var( $query );
+		if ( $redirects_count === false ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$redirects_count = (int) $wpdb->get_var( $wpdb->prepare(
+				"SELECT COUNT(*) FROM %i WHERE redirect_id = %d",
+				[ $table_name, $redirect_id ]
+			) );
+
+			// Save the result in cache for 5 minutes (300 seconds)
+			wp_cache_set( $cache_key, $redirects_count, 'linksh_plugin', 30 );
+		}
 
 		update_post_meta( $redirect_id, LINKSH_REDIRECT_COUNT_META_NAME, $redirects_count );
 	}
@@ -51,16 +58,36 @@ class LinkSh_Redirects {
 		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
 
 		// Automatically populate variables
-		$ip_address      = $_SERVER['REMOTE_ADDR'];
-		$referrer        = $_SERVER['HTTP_REFERER'] ?? 'Direct';
-		$user_agent      = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
-		$accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'Unknown';
+		if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+			$ip_address = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		} else {
+			$ip_address = 'Unknown';
+		}
+
+		if ( isset( $_SERVER['HTTP_REFERER'] ) ) {
+			$referrer = sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) );
+		} else {
+			$referrer = 'Direct';
+		}
+
+		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$user_agent = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+		} else {
+			$user_agent = 'Unknown';
+		}
+
+		if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			$accept_language = sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) );
+		} else {
+			$accept_language = 'Unknown';
+		}
 
 		// Extract OS and device type from User-Agent
 		$os          = $this->get_os( $user_agent );
 		$device_type = $this->get_device_type( $user_agent );
 
 		// Insert the record into the database
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->insert(
 			$table_name,
 			[
@@ -70,7 +97,7 @@ class LinkSh_Redirects {
 				'ip_address'      => $ip_address,
 				'referrer'        => $referrer,
 				'user_agent'      => $user_agent,
-				'accept_language' => $accept_language,
+				'accept_language' => mb_substr( $accept_language, 0, 127, 'UTF-8' ),
 				'os'              => $os,
 				'device_type'     => $device_type,
 			]

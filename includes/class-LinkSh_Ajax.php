@@ -5,13 +5,13 @@
  */
 
 class LinkSh_Ajax {
-	private string $security_str = 'LinksShortener2024';
+	private string $security_str = 'LinksShortener2025';
 
 	public function __construct() {
-        // Add custom data to use in JS
+		// Add custom data to use in JS
 		add_action( 'admin_enqueue_scripts', [ $this, 'setup_admin_ajax_data' ] );
 
-        // Processing of AJAX request to add the form
+		// Processing of AJAX request to add the form
 		add_action( 'wp_ajax_get_linksh_adding_form', [ $this, 'get_linksh_adding_form' ] );
 	}
 
@@ -47,21 +47,34 @@ class LinkSh_Ajax {
 		ob_start();
 		?>
         <div class="adding-form-wrapper">
-            <h2><?php _e( 'Short your link', 'linkssh' ); ?></h2>
+            <h2><?php esc_html_e( 'Short your link', 'links-shortener' ); ?></h2>
             <form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+				<?php wp_nonce_field( $this->security_str, 'links-shortener-new-link-nonce' ); ?>
+                <input type="hidden" name="linksh_source_page" value="<?php
+				echo isset( $_POST['linksh_page'] ) ? esc_url( sanitize_text_field( wp_unslash( $_POST['linksh_page'] ) ) ) : '';
+				?>">
+
+
                 <input type="hidden" name="action" value="process_link_shortener">
 
-                <label for="long_url"><?php _e( 'Full URL of the long link', 'linkssh' ); ?></label>
+                <label for="long_url"><?php esc_html_e( 'Full URL of the long link', 'links-shortener' ); ?></label>
                 <input type="url" id="long_url" name="long_url" placeholder="https://" required>
-                <p class="description"><?php _e( 'Full URL, with https:// ' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Full URL, with https:// ', 'links-shortener' ); ?></p>
                 <br>
 
-                <label for="short_url"><?php _e( 'Short link slug', 'linkssh' ); ?></label>
+                <label for="short_url"><?php esc_html_e( 'Short link slug', 'links-shortener' ); ?></label>
                 <input type="text" id="short_url" name="short_url" pattern="[a-z0-9]*">
-                <p class="description"><?php printf( __( 'Optional. <br>URL-friendly slug only. Your URL will be generated in the form %s/your_slug. <br>You can use letters a-z and digits 0-9 ' ), home_url() ); ?></p>
+                <p class="description"><?php printf( '%s.<br>%s %s/%s. <br> %s',
+						esc_html__( 'Optional', 'links-shortener' ),
+						esc_html__( 'URL-friendly slug only. Your URL will be generated in the form', 'links-shortener' ),
+						esc_url( home_url() ),
+						esc_html__( 'your_slug', 'links-shortener' ),
+						esc_html__( 'You can use letters a-z and digits 0-9 ', 'links-shortener' ) ); ?>
+                </p>
                 <br>
 
-                <button class='button-primary button' type="submit"><?php _e( 'Short the link', 'linkssh' ); ?></button>
+                <button class='button-primary button'
+                        type="submit"><?php esc_html_e( 'Short the link', 'links-shortener' ); ?></button>
             </form>
         </div>
 

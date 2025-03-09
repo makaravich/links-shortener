@@ -1,9 +1,9 @@
-=== Links Shortener ===
+=== Links shortener ===
 Contributors: makaravich
 Donate link: https://buymeacoffee.com/mcarena
 Tags: links, shortener, url, redirect
-Requires at least: 6.0
-Tested up to: 6.4
+Requires at least: 6.2
+Tested up to: 6.7
 Stable tag: 0.1.0
 Requires PHP: 8.0
 License: GPLv2

@@ -11,6 +11,8 @@ class LinkSh_Init {
 		// Add custom column to User's table
 		add_filter( 'manage_users_columns', [ $this, 'custom_add_user_columns' ] );
 		add_action( 'manage_users_custom_column', [ $this, 'custom_show_user_posts' ], 10, 3 );
+
+		add_action( 'admin_notices', [ $this, 'permalinks_structure_message' ] );
 	}
 
 	/**
@@ -27,7 +29,7 @@ class LinkSh_Init {
 			wp_enqueue_script( 'linksh-admin-script', LINKSH_PLUGIN_BASEURI . '/assets/js/admin.js', [
 				'jquery',
 				'wp-util'
-			], filemtime( LINKSH_PLUGIN_BASEPATH . '/assets/js/admin.js' ) );
+			], filemtime( LINKSH_PLUGIN_BASEPATH . '/assets/js/admin.js' ), true );
 		}
 	}
 
@@ -59,6 +61,24 @@ class LinkSh_Init {
 		}
 
 		return $value;
+	}
+
+	public function permalinks_structure_message(): void {
+		// Check the current admin screen
+		$screen = get_current_screen();
+		if ( $screen && $screen->id === 'edit-links_shrt' ) {
+			// Get the current permalink structure
+			if ( get_option( 'permalink_structure' ) === '' ) {
+				?>
+                <div class="notice notice-warning is-dismissible">
+                    <p><strong>Warning:</strong> Your permalink structure is set to the default (?p=123). This may cause
+                        issues with short links. Please change it to "Post name" or another structure in <a
+                                href="<?php echo esc_url( admin_url( 'options-permalink.php' ) ) ?>">Permalink
+                            Settings</a></p>
+                </div>
+				<?php
+			}
+		}
 	}
 }
 

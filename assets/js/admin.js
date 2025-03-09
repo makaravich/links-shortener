@@ -8,7 +8,8 @@ jQuery(document).ready(function ($) {
             url: LINKSH_AJAX.ajax_url,
             data: {
                 action: "get_linksh_adding_form",
-                nonce: LINKSH_AJAX.nonce
+                nonce: LINKSH_AJAX.nonce,
+                linksh_page: window.location.href,
             },
             success: function (response) {
                 $(response.data.formContent).insertBefore("body.post-type-" + LINKSH_AJAX.postType + " hr.wp-header-end");

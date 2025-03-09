@@ -22,44 +22,43 @@ class LinksSh_CPT {
 	 */
 	function register_post_types(): void {
 		register_post_type( LINKSH_POST_TYPE, [
-			'label'         => null,
-			'labels'        => [
+			'label'        => null,
+			'labels'       => [
 				// Name for the post type.
-				'name'              => __( 'Links Shortener', 'linkssh' ),
+				'name'              => __( 'Links Shortener', 'links-shortener' ),
 				// Name for single post of that type.
-				'singular_name'     => __( 'Links Shortener', 'linkssh' ),
+				'singular_name'     => __( 'Links Shortener', 'links-shortener' ),
 				// To add a new post.
-				'add_new'           => __( 'Add Links Shortener Item', 'linkssh' ),
+				'add_new'           => __( 'Add Links Shortener Item', 'links-shortener' ),
 				// Title for a newly created post in the admin panel.
-				'add_new_item'      => __( 'Add Links Shortener Item', 'linkssh' ),
+				'add_new_item'      => __( 'Add Links Shortener Item', 'links-shortener' ),
 				// For editing post type.
-				'edit_item'         => __( 'Edit Links Shortener Item', 'linkssh' ),
+				'edit_item'         => __( 'Edit Links Shortener Item', 'links-shortener' ),
 				// New post's text.
-				'new_item'          => __( 'New Links Shortener Item', 'linkssh' ),
+				'new_item'          => __( 'New Links Shortener Item', 'links-shortener' ),
 				// For viewing this post type.
-				'view_item'         => __( 'See Links Shortener Item', 'linkssh' ),
+				'view_item'         => __( 'See Links Shortener Item', 'links-shortener' ),
 				// Search for these post types.
-				'search_items'      => __( 'Find Links Shortener Items', 'linkssh' ),
+				'search_items'      => __( 'Find Links Shortener Items', 'links-shortener' ),
 				// If search has not found anything.
-				'not_found'         => __( 'Not Found', 'linkssh' ),
+				'not_found'         => __( 'Not Found', 'links-shortener' ),
 				// For parents (for hierarchical post types).
 				'parent_item_colon' => '',
 				// Menu name.
-				'menu_name'         => __( 'Links shortener', 'linkssh' ),
+				'menu_name'         => __( 'Links shortener', 'links-shortener' ),
 			],
-			'description'   => '',
-			'public'        => false,  // Disable public access
-			'show_ui'       => true,   // Still show in admin panel
-			'show_in_menu'  => true,
-			'show_in_rest'  => false,
-			'menu_position' => 80,
-            'menu_icon'     => 'dashicons-admin-links',
-			'hierarchical'  => false,
-			'supports'      => [ 'author' ],
-			'has_archive'   => false,  // Disable archives
-			'rewrite'       => false,  // Disable URL rewrite
-			'query_var'     => false,  // Disable query variable
-			'capabilities'  => [
+			'description'  => '',
+			'public'       => false,  // Disable public access
+			'show_ui'      => true,   // Still show in admin panel
+			'show_in_menu' => 'tools.php',
+			'show_in_rest' => false,
+			'menu_icon'    => 'dashicons-admin-links',
+			'hierarchical' => false,
+			'supports'     => [ 'author' ],
+			'has_archive'  => false,  // Disable archives
+			'rewrite'      => false,  // Disable URL rewrite
+			'query_var'    => false,  // Disable query variable
+			'capabilities' => [
 				'edit_post'          => 'edit_linkssh',
 				'read_post'          => 'read_linkssh',
 				'delete_post'        => 'delete_linkssh',
@@ -68,7 +67,7 @@ class LinksSh_CPT {
 				'publish_posts'      => 'publish_linksshs',
 				'read_private_posts' => 'read_private_linksshs',
 			],
-			'map_meta_cap'  => true,
+			'map_meta_cap' => true,
 		] );
 	}
 
@@ -100,9 +99,9 @@ class LinksSh_CPT {
 
 	function linksh_meta_box_callback( $post ): void {
 		// Retrieve meta field values
-		$long_url             = get_post_meta( $post->ID, LINKSH_LONG_URL_META_NAME, true );
-		$short_url_slug       = get_post_meta( $post->ID, LINKSH_SHORT_URL_META_NAME, true );
-		$redirects_count      = get_post_meta( $post->ID, LINKSH_REDIRECT_COUNT_META_NAME, true );
+		$long_url        = get_post_meta( $post->ID, LINKSH_LONG_URL_META_NAME, true );
+		$short_url_slug  = get_post_meta( $post->ID, LINKSH_SHORT_URL_META_NAME, true );
+		$redirects_count = get_post_meta( $post->ID, LINKSH_REDIRECT_COUNT_META_NAME, true );
 
 		// Use nonce for verification
 		wp_nonce_field( 'linksh_save_meta_box_data', 'linksh_meta_box_nonce' );
@@ -110,22 +109,23 @@ class LinksSh_CPT {
 		// HTML for the meta box
 		?>
         <div class="single-field">
-            <label class="label" for="linksh_long_url"><?php _e( 'Long URL:', 'linkssh' ) ?></label>
+            <label class="label" for="linksh_long_url"><?php esc_html_e( 'Long URL:', 'links-shortener' ) ?></label>
             <input type="text" id="linksh_long_url" name="linksh_long_url"
-                   value="<?php echo esc_attr( $long_url ); ?>"/>
+                   value="<?php echo esc_url( $long_url ); ?>"/>
         </div>
 
         <div class="single-field">
-            <p class="label"><?php _e( 'Short URL:', 'linkssh' ) ?></p>
-            <p class="value"><?php echo home_url() . '/' . esc_attr( $short_url_slug ); ?></p>
+            <p class="label"><?php esc_html_e( 'Short URL:', 'links-shortener' ) ?></p>
+            <p class="value"><?php echo esc_url( home_url() . '/' . esc_attr( $short_url_slug ) ); ?></p>
         </div>
         <div class="single-field">
-            <p class="label"><?php _e( 'Redirect Count:', 'linkssh' ) ?></p>
+            <p class="label"><?php esc_html_e( 'Redirect Count:', 'links-shortener' ) ?></p>
             <p class="value"><?php echo esc_attr( $redirects_count ); ?></p>
         </div>
         <div class="single-field">
-            <label class="label" for="linksh_extended_log"><?php _e( 'Extended Log:', 'linkssh' ) ?></label>
-			<?php echo $this->render_redirects_table( $post->ID ) ?>
+            <label class="label"
+                   for="linksh_extended_log"><?php esc_html_e( 'Extended Log:', 'links-shortener' ) ?></label>
+			<?php $this->render_redirects_table( $post->ID ) ?>
         </div>
 		<?php
 	}
@@ -135,63 +135,78 @@ class LinksSh_CPT {
 	 *
 	 * @param $redirect_id
 	 *
-	 * @return string
 	 */
-	public function render_redirects_table($redirect_id): string {
+	public function render_redirects_table( $redirect_id ): void {
 		global $wpdb;
 
 		// Get the table name
 		$table_name = $wpdb->prefix . LINKSH_LOG_TABLE_NAME;
 
-		// Query to fetch data for the given redirect_id
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
+		// Cache key for the query results
+		$cache_key = "redirect_logs_{$redirect_id}";
+		$results   = wp_cache_get( $cache_key, 'linksh_plugin' );
+
+		if ( $results === false ) {
+			// Results are not in cache, querying the database
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$results = $wpdb->get_results( $wpdb->prepare(
 				"SELECT datetime, target_url, ip_address, referrer, user_agent, accept_language, os, device_type 
-             FROM {$table_name} 
-             WHERE redirect_id = %d",
-				$redirect_id
-			)
-		);
-
-		// Start building the HTML table
-		$html = '<table class="redirects-log-table" style="width: 100%; border-collapse: collapse;">';
-		$html .= '<thead>';
-		$html .= '<tr>';
-		$html .= '<th>Datetime</th>';
-		$html .= '<th>Target URL</th>';
-		$html .= '<th>IP Address</th>';
-		$html .= '<th>Referrer</th>';
-		$html .= '<th>User Agent</th>';
-		$html .= '<th>Accept Language</th>';
-		$html .= '<th>OS</th>';
-		$html .= '<th>Device Type</th>';
-		$html .= '</tr>';
-		$html .= '</thead>';
-		$html .= '<tbody>';
-
-		// Check if we have results
-		if (!empty($results)) {
-			foreach ($results as $row) {
-				$html .= '<tr>';
-				$html .= '<td>' . esc_html($row->datetime) . '</td>';
-				$html .= '<td><a href="' . esc_url($row->target_url) . '" target="_blank">' . esc_html($row->target_url) . '</a></td>';
-				$html .= '<td>' . esc_html($row->ip_address) . '</td>';
-				$html .= '<td>' . esc_html($row->referrer) . '</td>';
-				$html .= '<td>' . esc_html($row->user_agent) . '</td>';
-				$html .= '<td>' . esc_html($row->accept_language) . '</td>';
-				$html .= '<td>' . esc_html($row->os) . '</td>';
-				$html .= '<td>' . esc_html($row->device_type) . '</td>';
-				$html .= '</tr>';
-			}
-		} else {
-			$html .= '<tr><td colspan="11" style="text-align: center;">No redirects found for this ID.</td></tr>';
+                        FROM %i WHERE redirect_id = %d",
+				[ $table_name, $redirect_id ]
+			) );
+			// Save the results in cache for 5 minutes (300 seconds)
+			wp_cache_set( $cache_key, $results, 'linksh_plugin', 30 );
 		}
 
-		$html .= '</tbody>';
-		$html .= '</table>';
+		// Start building the HTML table
+		?>
+        <table class="redirects-log-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>Datetime</th>
+                <th>Target URL</th>
+                <th>IP Address</th>
+                <th>Referrer</th>
+                <th>User Agent</th>
+                <th>Accept Language</th>
+                <th>OS</th>
+                <th>Device Type</th>
+            </tr>
+            </thead>
+            <tbody>
+			<?php
+			// Check if we have results
+			if ( ! empty( $results ) ) {
+				foreach ( $results as $row ) {
+					?>
+                    <tr>
+                        <td><?php echo esc_html( $row->datetime ) ?> </td>
+                        <td>
+                            <a href="<?php echo esc_url( $row->target_url ) ?>"
+                               target="_blank"><?php echo esc_html( $row->target_url ) ?></a>
+                        </td>
+                        <td><?php echo esc_html( $row->ip_address ) ?></td>
+                        <td><?php echo esc_html( $row->referrer ) ?></td>
+                        <td><?php echo esc_html( $row->user_agent ) ?></td>
+                        <td><?php echo esc_html( $row->accept_language ) ?></td>
+                        <td><?php echo esc_html( $row->os ) ?></td>
+                        <td><?php echo esc_html( $row->device_type ) ?></td>
+                    </tr>
+					<?php
+				}
+			} else {
+				?>
+                <tr>
+                    <td colspan="11" style="text-align: center;">No redirects found for this ID.</td>
+                </tr>
+				<?php
+			}
 
-		// Return the generated HTML
-		return $html;
+			?>
+            </tbody>
+        </table>
+		<?php
 	}
 
 	/**
@@ -203,7 +218,8 @@ class LinksSh_CPT {
 	 */
 	function linksh_save_meta_box_data( $post_id ): void {
 		// Check nonce
-		if ( ! isset( $_POST['linksh_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['linksh_meta_box_nonce'], 'linksh_save_meta_box_data' ) ) {
+		if ( ! isset( $_POST['linksh_meta_box_nonce'] ) ||
+		     ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['linksh_meta_box_nonce'] ) ), 'linksh_save_meta_box_data' ) ) {
 			return;
 		}
 
@@ -217,9 +233,9 @@ class LinksSh_CPT {
 			return;
 		}
 
-		// Save long_url field
+// Save long_url field
 		if ( isset( $_POST['linksh_long_url'] ) ) {
-			update_post_meta( $post_id, LINKSH_LONG_URL_META_NAME, sanitize_text_field( $_POST['linksh_long_url'] ) );
+			update_post_meta( $post_id, LINKSH_LONG_URL_META_NAME, sanitize_text_field( wp_unslash( $_POST['linksh_long_url'] ) ) );
 		}
 	}
 }
